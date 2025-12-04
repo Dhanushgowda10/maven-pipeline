@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         GITHUB_CREDS = credentials('github-packages-cred')
-        JAVA_HOME = tool name: 'JDK'
-        MAVEN_HOME = tool name: 'maven'
-        PATH = "${JAVA_HOME}/bin:${PATH}"
+        JAVA_HOME    = tool 'JDK'
+        MAVEN_HOME   = tool 'maven'
+        PATH         = "${JAVA_HOME}\\bin;${MAVEN_HOME}\\bin;${env.PATH}"
     }
 
     stages {
@@ -20,11 +20,11 @@ pipeline {
             steps {
                 configFileProvider([configFile(fileId: 'maven-github-settings', variable: 'MAVEN_SETTINGS')]) {
                     bat """
-                        export GH_USER=${GITHUB_CREDS_USR}
-                        export GH_TOKEN=${GITHUB_CREDS_PSW}
+                    set GH_USER=%GITHUB_CREDS_USR%
+                    set GH_TOKEN=%GITHUB_CREDS_PSW%
 
-                        ${MAVEN_HOME}/bin/mvn -s $MAVEN_SETTINGS -B clean package
-                        ${MAVEN_HOME}/bin/mvn -s $MAVEN_SETTINGS -B deploy
+                    "%MAVEN_HOME%\\bin\\mvn" -s "%MAVEN_SETTINGS%" -B clean package
+                    "%MAVEN_HOME%\\bin\\mvn" -s "%MAVEN_SETTINGS%" -B deploy
                     """
                 }
             }
